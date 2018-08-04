@@ -1,0 +1,82 @@
+#!/usr/bin/env bash
+
+main() {
+
+    if quiet which lemonade && quiet timeout 1 lemonade paste; then
+            case "$SCRIPT_NAME" in 
+                pbcopy|*copy*)
+                    exec lemonade copy
+                    ;;
+                pbpaste|*paste*)
+                    exec lemonade paste
+                    ;;
+            esac
+    fi
+
+
+    if [[ "$CUR_PLATFORM" == "Darwin" ]]; then
+    # if true; then
+
+        # on OS X we want to use the system pbcopy/pbpaste, so iterate down the 
+        # output of `which -a` to access the version of pbcopy/pbpaste that's masked
+        # by this script, and then execute it directly
+        dirs_to_try=( 
+            $(which -a "$SCRIPT_NAME" | while read i; do echo "$(dirname "$i")"; done)
+        )
+
+        for dir in "${dirs_to_try[@]}"; do 
+            if [[ "$dir" == "$SCRIPT_DIR" ]]; then 
+                continue 
+            fi
+            break
+        done
+
+        if [[ "$dir/$SCRIPT_NAME" == "$SCRIPT_DIR/$SCRIPT_NAME" ]]; then
+            echo "ERROR: couldn't find system pbpaste and refusing to re-run $SCRIPT_DIR/$SCRIPT_NAME!" 
+            exit 1
+        fi
+
+        # execute the last item we found in path
+        exec "$dir"/$SCRIPT_NAME
+    elif [[ "$CUR_PLATFORM" == "Linux" ]]; then
+
+        if quiet which xsel && quiet timeout 1 xsel --clipboard --output; then
+            case "$SCRIPT_NAME" in 
+                pbcopy|*copy*)
+                    exec xsel --clipboard --input
+                    ;;
+                pbpaste|*paste*)
+                    exec xsel --clipboard --output
+                    ;;
+            esac
+        fi
+    fi
+
+}
+
+quiet() {
+    $@ &> /dev/null
+}
+
+abspath() {
+    local dir=
+    local file=
+    local res=
+    if quiet pushd "$1"; then
+        pwd
+        quiet popd
+    else
+        dir="$(dirname "$1")"
+        file="$(basename "$1")"
+        quiet pushd "$dir"
+        echo "$PWD/$file"
+        quiet popd
+    fi
+}
+
+SCRIPT_NAME="$(basename $0)"
+SCRIPT_DIR="$(abspath $(dirname $0))"
+CUR_PLATFORM="$(uname)"
+
+
+main
