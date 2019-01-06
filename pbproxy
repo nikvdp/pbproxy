@@ -5,10 +5,10 @@ main() {
     if quiet which lemonade && quiet timeout 1 lemonade paste; then
             case "$SCRIPT_NAME" in 
                 pbcopy|*copy*)
-                    exec lemonade copy
+                    exec lemonade copy 2>/dev/null
                     ;;
                 pbpaste|*paste*)
-                    exec lemonade paste
+                    exec lemonade paste 2>/dev/null
                     ;;
             esac
     fi
