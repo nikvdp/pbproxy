@@ -5,7 +5,7 @@ main() {
     if quiet which lemonade && quiet timeout 1 lemonade paste; then
             case "$SCRIPT_NAME" in 
                 pbcopy|*copy*)
-                    exec lemonade copy 2>/dev/null
+                    cat | exec lemonade copy 2>/dev/null
                     ;;
                 pbpaste|*paste*)
                     exec lemonade paste 2>/dev/null
@@ -43,7 +43,7 @@ main() {
         if quiet which xsel && quiet timeout 1 xsel --clipboard --output; then
             case "$SCRIPT_NAME" in 
                 pbcopy|*copy*)
-                    exec xsel --clipboard --input
+                    cat | exec xsel --clipboard --input
                     ;;
                 pbpaste|*paste*)
                     exec xsel --clipboard --output
