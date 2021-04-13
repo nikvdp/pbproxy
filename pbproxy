@@ -45,7 +45,7 @@ main() {
         # exec "$dir"/$SCRIPT_NAME
 
         # run the system pbcopy/pbpaste
-        cat | exec "/usr/bin/$SCRIPT_NAME"
+        exec "/usr/bin/$SCRIPT_NAME"
 
     elif [[ "$CUR_PLATFORM" == "Linux" ]]; then
 
