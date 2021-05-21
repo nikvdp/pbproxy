@@ -1,52 +1,56 @@
 #!/usr/bin/env bash
 
-lemonader() (
-    if quiet which lemonade && quiet timeout 1 lemonade paste; then
-            case "$SCRIPT_NAME" in 
-                pbcopy|*copy*)
-                    cat | exec lemonade copy 2>/dev/null
-                    ;;
-                pbpaste|*paste*)
-                    exec lemonade paste 2>/dev/null
-                    ;;
-            esac
-    fi
-)
-
 main() {
+    case "$1" in
+        --start-session|-s)
+            remote_host="$2"
+            # write session file 
+            cat > ~/.pbproxy <<EOF
+            pbproxy_last_run_time="$(date +%s)"
+            remote_host="$remote_host"
+EOF
+            echo >&2 "Started remote pbproxy session for host '$remote_host'"
+            return
+        ;;
+        --end-session|-S)
+            rm ~/.pbproxy
+            echo >&2 "Ended remote pbproxy session"
+            return
+        ;;
+    esac
 
-    # # right now lemonader is broken because lemonade itself also calls
-    # # pbcopy, so it recurses and goes really slow
-    # lemonader &
+    local remote_host="$1"
+
+    # load remote host from file if there's a valid session
+    if [[ -f ~/.pbproxy ]] && [[ -z "$remote_host" ]]; then
+        remote_host="$(
+        # pbproxy should set "$pbproxy_last_run_time" and "$remote_host"
+        source ~/.pbproxy
+        # if session was set w/in last day
+        if [[  $(( $(( $(date +%s) )) - pbproxy_last_run_time )) -lt $((24*60*60))  ]]; then 
+            echo "$remote_host"
+        fi
+        )"
+    fi
+
+    if [[ -n "$remote_host" ]]; then 
+        case "$SCRIPT_NAME" in 
+            pbcopy|*copy*)
+                exec cat | ssh "$remote_host" '~/bin/pbcopy'
+                ;;
+            pbpaste|*paste*)
+                exec ssh "$remote_host" '~/bin/pbpaste' 
+                ;;
+        esac
+
+        return 0
+    fi
+
 
     if [[ "$CUR_PLATFORM" == "Darwin" ]]; then
-    # if true; then
-
-        # # on OS X we want to use the system pbcopy/pbpaste, so iterate down the 
-        # # output of `which -a` to access the version of pbcopy/pbpaste that's masked
-        # # by this script, and then execute it directly
-        # dirs_to_try=( 
-        #     $(which -a "$SCRIPT_NAME" | while read i; do echo "$(dirname "$i")"; done)
-        # )
-        #
-        # for dir in "${dirs_to_try[@]}"; do 
-        #     if [[ "$dir" == "$SCRIPT_DIR" ]]; then 
-        #         continue 
-        #     fi
-        #     break
-        # done
-        #
-        # if [[ "$dir/$SCRIPT_NAME" == "$SCRIPT_DIR/$SCRIPT_NAME" ]]; then
-        #     echo "ERROR: couldn't find system pbpaste and refusing to re-run $SCRIPT_DIR/$SCRIPT_NAME!" 
-        #     exit 1
-        # fi
-        #
-        # # execute the last item we found in path
-        # exec "$dir"/$SCRIPT_NAME
 
         # run the system pbcopy/pbpaste
         exec "/usr/bin/$SCRIPT_NAME"
-
     elif [[ "$CUR_PLATFORM" == "Linux" ]]; then
 
         if quiet which xsel && quiet timeout 1 xsel --clipboard --output; then
@@ -58,6 +62,17 @@ main() {
                     exec xsel --clipboard --output
                     ;;
             esac
+        else 
+            local pboard_file="/tmp/pboard"
+            case "$SCRIPT_NAME" in 
+                pbcopy|*copy*)
+                    exec cat > "$pboard_file"
+                    ;;
+                pbpaste|*paste*)
+                    [[ -f "$pboard_file" ]] && exec cat "$pboard_file" 
+                    ;;
+            esac
+            
         fi
     fi
 
@@ -83,9 +98,25 @@ abspath() {
     fi
 }
 
+lemonader() (
+    # # right now lemonader is broken because lemonade itself also calls
+    # # pbcopy, so it recurses and goes really slow
+    # lemonader &
+
+    if quiet which lemonade && quiet timeout 1 lemonade paste; then
+            case "$SCRIPT_NAME" in 
+                pbcopy|*copy*)
+                    cat | exec lemonade copy 2>/dev/null
+                    ;;
+                pbpaste|*paste*)
+                    exec lemonade paste 2>/dev/null
+                    ;;
+            esac
+    fi
+)
 SCRIPT_NAME="$(basename $0)"
 SCRIPT_DIR="$(abspath $(dirname $0))"
 CUR_PLATFORM="$(uname)"
 
 
-main
+main "$@"
