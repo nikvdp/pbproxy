@@ -17,6 +17,12 @@ EOF
             echo >&2 "Ended remote pbproxy session"
             return
         ;;
+        --help)
+            echo -e "Usage: \n"
+            echo "$(basename "$0") --start-session/-s <hostname>"
+            echo "$(basename "$0") --end-session"
+            return
+        ;;
     esac
 
     local remote_host="$1"
