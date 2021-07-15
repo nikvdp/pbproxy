@@ -17,11 +17,24 @@ EOF
             echo >&2 "Ended remote pbproxy session"
             return
         ;;
-        --help)
-            echo -e "Usage: \n"
-            echo "$(basename "$0") --start-session/-s <hostname>"
-            echo "$(basename "$0") --end-session"
-            return
+        --help|-h)
+            cat <<EOF
+
+$(basename $0)
+
+pbcopy/pbpaste wrapper with remote session support.
+
+Copy to another machine's clipboard:
+
+echo hi | pbcopy <hostname>
+
+
+Usage:
+      -s, --start-session <hostname>
+      -S, --end-session   <hostname>
+
+EOF
+        return 0
         ;;
     esac
 
