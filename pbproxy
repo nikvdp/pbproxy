@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# this is used to emulate a clipboard on machines where xsel and/or
+# pbcopy/pbpaste aren't present (eg a headless linux box with no X servre)
+PBPROXY_TEMPFILE="/tmp/pboard"
+
 main() {
     case "$1" in
     --start-session | -s)
@@ -66,13 +70,12 @@ EOF
                 ;;
             esac
         else
-            local pboard_file="/tmp/pboard"
             case "$SCRIPT_NAME" in
             pbcopy | *copy*)
-                exec cat >"$pboard_file"
+                exec cat >"$PBPROXY_TEMPFILE"
                 ;;
             pbpaste | *paste*)
-                [[ -f "$pboard_file" ]] && exec cat "$pboard_file"
+                [[ -f "$PBPROXY_TEMPFILE" ]] && exec cat "$PBPROXY_TEMPFILE"
                 ;;
             esac
 
