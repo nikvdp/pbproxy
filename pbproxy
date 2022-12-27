@@ -117,22 +117,6 @@ abspath() {
     fi
 }
 
-lemonader() (
-    # # right now lemonader is broken because lemonade itself also calls
-    # # pbcopy, so it recurses and goes really slow
-    # lemonader &
-
-    if quiet which lemonade && quiet timeout 1 lemonade paste; then
-            case "$SCRIPT_NAME" in 
-                pbcopy|*copy*)
-                    cat | exec lemonade copy 2>/dev/null
-                    ;;
-                pbpaste|*paste*)
-                    exec lemonade paste 2>/dev/null
-                    ;;
-            esac
-    fi
-)
 SCRIPT_NAME="$(basename $0)"
 SCRIPT_DIR="$(abspath $(dirname $0))"
 CUR_PLATFORM="$(uname)"
