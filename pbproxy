@@ -18,23 +18,7 @@ EOF
             return
         ;;
         --help|-h)
-            cat <<EOF
-
-$(basename $0)
-
-pbcopy/pbpaste wrapper with remote session support.
-
-Copy to another machine's clipboard:
-
-echo hi | pbcopy <hostname>
-
-
-Usage:
-      -s, --start-session <hostname>
-      -S, --end-session   <hostname>
-
-EOF
-        return 0
+        show-usage
         ;;
     esac
 
@@ -95,6 +79,26 @@ EOF
         fi
     fi
 
+}
+
+show-usage() {
+    cat <<EOF
+
+$(basename $0)
+
+pbcopy/pbpaste wrapper with remote session support.
+
+Copy to another machine's clipboard:
+
+echo hi | pbcopy <hostname>
+
+
+Usage:
+      -s, --start-session <hostname>
+      -S, --end-session   <hostname>
+
+EOF
+    return 0
 }
 
 quiet() {
