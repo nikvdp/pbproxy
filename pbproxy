@@ -2,23 +2,24 @@
 
 main() {
     case "$1" in
-        --start-session|-s)
-            remote_host="$2"
-            # write session file 
-            cat > ~/.pbproxy <<EOF
+    --start-session | -s)
+        remote_host="$2"
+        # write session file
+        cat >~/.pbproxy <<EOF
             pbproxy_last_run_time="$(date +%s)"
             remote_host="$remote_host"
 EOF
-            echo >&2 "Started remote pbproxy session for host '$remote_host'"
-            return
+        echo >&2 "Started remote pbproxy session for host '$remote_host'"
+        return
         ;;
-        --end-session|-S)
-            rm ~/.pbproxy
-            echo >&2 "Ended remote pbproxy session"
-            return
+    --end-session | -S)
+        rm ~/.pbproxy
+        echo >&2 "Ended remote pbproxy session"
+        return
         ;;
-        --help|-h)
+    --help | -h)
         show-usage
+        return 0
         ;;
     esac
 
@@ -27,28 +28,27 @@ EOF
     # load remote host from file if there's a valid session
     if [[ -f ~/.pbproxy ]] && [[ -z "$remote_host" ]]; then
         remote_host="$(
-        # pbproxy should set "$pbproxy_last_run_time" and "$remote_host"
-        source ~/.pbproxy
-        # if session was set w/in last day
-        if [[  $(( $(( $(date +%s) )) - pbproxy_last_run_time )) -lt $((24*60*60))  ]]; then 
-            echo "$remote_host"
-        fi
+            # pbproxy should set "$pbproxy_last_run_time" and "$remote_host"
+            source ~/.pbproxy
+            # if session was set w/in last day
+            if [[ $(($(($(date +%s))) - pbproxy_last_run_time)) -lt $((24 * 60 * 60)) ]]; then
+                echo "$remote_host"
+            fi
         )"
     fi
 
-    if [[ -n "$remote_host" ]]; then 
-        case "$SCRIPT_NAME" in 
-            pbcopy|*copy*)
-                exec cat | ssh "$remote_host" '~/bin/pbcopy'
-                ;;
-            pbpaste|*paste*)
-                exec ssh "$remote_host" '~/bin/pbpaste' 
-                ;;
+    if [[ -n "$remote_host" ]]; then
+        case "$SCRIPT_NAME" in
+        pbcopy | *copy*)
+            exec cat | ssh "$remote_host" '~/bin/pbcopy'
+            ;;
+        pbpaste | *paste*)
+            exec ssh "$remote_host" '~/bin/pbpaste'
+            ;;
         esac
 
         return 0
     fi
-
 
     if [[ "$CUR_PLATFORM" == "Darwin" ]]; then
 
@@ -57,25 +57,25 @@ EOF
     elif [[ "$CUR_PLATFORM" == "Linux" ]]; then
 
         if quiet which xsel && quiet timeout 1 xsel --clipboard --output; then
-            case "$SCRIPT_NAME" in 
-                pbcopy|*copy*)
-                    cat | exec xsel --clipboard --input
-                    ;;
-                pbpaste|*paste*)
-                    exec xsel --clipboard --output
-                    ;;
+            case "$SCRIPT_NAME" in
+            pbcopy | *copy*)
+                cat | exec xsel --clipboard --input
+                ;;
+            pbpaste | *paste*)
+                exec xsel --clipboard --output
+                ;;
             esac
-        else 
+        else
             local pboard_file="/tmp/pboard"
-            case "$SCRIPT_NAME" in 
-                pbcopy|*copy*)
-                    exec cat > "$pboard_file"
-                    ;;
-                pbpaste|*paste*)
-                    [[ -f "$pboard_file" ]] && exec cat "$pboard_file" 
-                    ;;
+            case "$SCRIPT_NAME" in
+            pbcopy | *copy*)
+                exec cat >"$pboard_file"
+                ;;
+            pbpaste | *paste*)
+                [[ -f "$pboard_file" ]] && exec cat "$pboard_file"
+                ;;
             esac
-            
+
         fi
     fi
 
@@ -102,7 +102,7 @@ EOF
 }
 
 quiet() {
-    $@ &> /dev/null
+    $@ &>/dev/null
 }
 
 abspath() {
@@ -124,6 +124,5 @@ abspath() {
 SCRIPT_NAME="$(basename $0)"
 SCRIPT_DIR="$(abspath $(dirname $0))"
 CUR_PLATFORM="$(uname)"
-
 
 main "$@"
