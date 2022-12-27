@@ -86,12 +86,17 @@ show-usage() {
 
 $(basename $0)
 
-pbcopy/pbpaste wrapper with remote session support.
+pbcopy/pbpaste and xsel wrapper with remote session support.
+
+You can use this to copy and paste to/from another machine's clipboard over
+ssh. <hostname> below can be any hostname your machine can reach via ssh
+(including host aliases set in ~/.ssh/config)
+
+Usage:
 
 Copy to another machine's clipboard:
 
 echo hi | pbcopy <hostname>
-
 
 Usage:
       -s, --start-session <hostname>
