@@ -18,6 +18,8 @@ the contents of server1's clipboard.
 
 ## Usage:
 
+**For best results make sure you have key-based ssh authentication set up**,
+otherwise you'll have to enter your password each time you copy or paste.
 
 - Print the contents of another machine's clipboard to your local machine's stdout:
   ```
@@ -39,9 +41,9 @@ the contents of server1's clipboard.
 - Print the contents of your local clipboard to stdout: `pbpaste`
 - Insert data into your local clipboard: `echo some data | pbcopy`
 
-**NOTE**: This tool works the same way regardless of if it's running on a macOS or
-linux machine, on macs it wraps the native pbcopy and pbaste commands, and on
-linux it uses xsel or a temp file
+**NOTE**: This tool works the same way regardless of whether it's running on a
+macOS or a linux machine. On macs it wraps the native pbcopy and pbaste commands,
+and on linux it uses `xsel` or a temp file
   
 
 ## Installation
@@ -52,4 +54,15 @@ linux it uses xsel or a temp file
   `/usr/bin` on your PATH, otherwise the native `pbcopy` and `pbpaste` will
   take precedence)
 - restart your shell (or on zsh do `hash -r`) and try it out.
+
+For the lazy (read: efficient), copy/pasting this quick and dirty shell snippet should get the job done:
+
+```bash 
+git clone https://github.com/nikvdp/pbproxy ~/.pbproxy
+ps | grep $$ | grep -q zsh && echo 'export PATH="$HOME/.pbproxy:$PATH"' | tee -a ~/.zshrc
+ps | grep $$ | grep -q bash && echo 'export PATH="$HOME/.pbproxy:$PATH"' | tee -a ~/.bashrc
+export PATH="$HOME/.pbproxy:$PATH"
+hash -r
+```
+
 
