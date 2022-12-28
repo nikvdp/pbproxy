@@ -3,6 +3,7 @@
 # this is used to emulate a clipboard on machines where xsel and/or
 # pbcopy/pbpaste aren't present (eg a headless linux box with no X servre)
 PBPROXY_TEMPFILE="/tmp/pboard"
+PBPROXY_SESSION_TIMEOUT="$((24 * 60 * 60))"
 
 main() {
     case "$1" in
@@ -35,7 +36,7 @@ EOF
             # pbproxy should set "$pbproxy_last_run_time" and "$remote_host"
             source ~/.pbproxy
             # if session was set w/in last day
-            if [[ $(($(($(date +%s))) - pbproxy_last_run_time)) -lt $((24 * 60 * 60)) ]]; then
+            if [[ $(($(($(date +%s))) - pbproxy_last_run_time)) -lt "$PBPROXY_SESSION_TIMEOUT" ]]; then
                 echo "$remote_host"
             fi
         )"
