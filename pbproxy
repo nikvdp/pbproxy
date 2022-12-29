@@ -14,11 +14,25 @@ main() {
 
     local remote_host="$1"
 
+    if [[ -n "$remote_host" ]]; then
+        case "$SCRIPT_NAME" in
+        pbcopy | *copy*)
+            exec cat | ssh "$remote_host" '~/bin/pbcopy'
+            ;;
+        pbpaste | *paste*)
+            exec ssh "$remote_host" '~/bin/pbpaste'
+            ;;
+        esac
+
+        return 0
+    fi
+
     if [[ "$CUR_PLATFORM" == "Darwin" ]]; then
+
         # run the system pbcopy/pbpaste
         exec "/usr/bin/$SCRIPT_NAME"
     elif [[ "$CUR_PLATFORM" == "Linux" ]]; then
-        # Use xsel on linux
+
         if quiet which xsel && quiet timeout 1 xsel --clipboard --output; then
             case "$SCRIPT_NAME" in
             pbcopy | *copy*)
