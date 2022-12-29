@@ -1,4 +1,4 @@
-# pbproxy - send your clipboard anywhere you can ssh
+# pbproxy - send your clipboard anywhere you can ssh to
 
 **TL;DR:** `pbcopy` and `pbpaste` from any (mac or linux) machine you can ssh to
 
@@ -20,10 +20,10 @@ the contents of server1's clipboard.
 
 For best results:
 
+- make sure you have `pbproxy` installed and on `PATH` on all machines you'll
+be copying/pasting to/from.
 - **make sure you have key-based ssh authentication set up** (otherwise you'll
   have to enter your password each time you copy or paste)
-- make sure you have `pbproxy` installed and on `PATH` on all machines you'll
-  be copying/pasting to/from.
 
 ## Usage:
 
