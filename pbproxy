@@ -72,9 +72,13 @@ ssh. <hostname> below can be any hostname your machine can reach via ssh
 
 Usage:
 
-Copy to another machine's clipboard:
+Print the data in another machine's clipboard:
 
-echo hi | pbcopy <hostname>
+    pbpaste <hostname>
+
+Copy data to another machine's clipboard:
+
+    echo hi | pbcopy <hostname>
 
 EOF
     return 0
