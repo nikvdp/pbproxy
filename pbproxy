@@ -17,10 +17,10 @@ main() {
     if [[ -n "$remote_host" ]]; then
         case "$SCRIPT_NAME" in
         pbcopy | *copy*)
-            exec cat | ssh "$remote_host" '~/bin/pbcopy'
+            exec cat | ssh "$remote_host" '~/.pbproxy/pbcopy'
             ;;
         pbpaste | *paste*)
-            exec ssh "$remote_host" '~/bin/pbpaste'
+            exec ssh "$remote_host" '~/.pbproxy/pbpaste'
             ;;
         esac
 

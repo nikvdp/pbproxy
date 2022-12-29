@@ -20,7 +20,7 @@ the contents of server1's clipboard.
 
 For best results:
 
-- make sure you have `pbproxy` installed and on `PATH` on all machines you'll
+- make sure you have `pbproxy` installed at `~/.pbproxy` on all machines you'll
 be copying/pasting to/from.
 - **make sure you have key-based ssh authentication set up** (otherwise you'll
   have to enter your password each time you copy or paste)
