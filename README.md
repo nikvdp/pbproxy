@@ -16,23 +16,29 @@ from server2 would print 'hello'. You can also do this in the other direction
 with pbpaste, eg from server2 you can run `pbpaste server1` and it'll print out
 the contents of server1's clipboard.
 
-## Usage:
+## Prereqs:
 
-**For best results make sure you have key-based ssh authentication set up**,
-otherwise you'll have to enter your password each time you copy or paste.
+For best results:
+
+- **make sure you have key-based ssh authentication set up** (otherwise you'll
+  have to enter your password each time you copy or paste)
+- make sure you have `pbproxy` installed and on `PATH` on all machines you'll
+  be copying/pasting to/from.
+
+## Usage:
 
 - Print the contents of another machine's clipboard to your local machine's stdout:
   ```
   pbpaste <some-server>
   ```
-- Insert data into another machine's clipboard: 
+- Insert data into another machine's clipboard:
 
   ```
   echo hello there | pbcopy <some-server>
   ```
 
   You can also use this to send the contents of your current machine's
-  clipboard to another machine: 
+  clipboard to another machine:
 
   ```
   pbpaste | pbcopy <some-server>
@@ -44,7 +50,6 @@ otherwise you'll have to enter your password each time you copy or paste.
 **NOTE**: This tool works the same way regardless of whether it's running on a
 macOS or a linux machine. On macs it wraps the native pbcopy and pbaste commands,
 and on linux it uses `xsel` or a temp file
-  
 
 ## Installation
 
@@ -57,12 +62,10 @@ and on linux it uses `xsel` or a temp file
 
 For the lazy (read: efficient), copy/pasting this quick and dirty shell snippet should get the job done:
 
-```bash 
+```bash
 git clone https://github.com/nikvdp/pbproxy ~/.pbproxy
 ps | grep $$ | grep -q zsh && echo 'export PATH="$HOME/.pbproxy:$PATH"' | tee -a ~/.zshrc
 ps | grep $$ | grep -q bash && echo 'export PATH="$HOME/.pbproxy:$PATH"' | tee -a ~/.bashrc
 export PATH="$HOME/.pbproxy:$PATH"
 hash -r
 ```
-
-
