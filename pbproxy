@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # this is used to emulate a clipboard on machines where xsel and/or
-# pbcopy/pbpaste aren't present (eg a headless linux box with no X servre)
+# pbcopy/pbpaste aren't present (eg a headless linux box with no X server)
 PBPROXY_TEMPFILE="$HOME/.pbproxy/pbproxy-tempfile"
 
 main() {
