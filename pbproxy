@@ -2,7 +2,7 @@
 
 # this is used to emulate a clipboard on machines where xsel and/or
 # pbcopy/pbpaste aren't present (eg a headless linux box with no X servre)
-PBPROXY_TEMPFILE="/tmp/pboard"
+PBPROXY_TEMPFILE="$HOME/.pbproxy/pbproxy-tempfile"
 
 main() {
     case "$1" in
