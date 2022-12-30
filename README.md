@@ -69,3 +69,10 @@ ps | grep $$ | grep -q bash && echo 'export PATH="$HOME/.pbproxy:$PATH"' | tee -
 export PATH="$HOME/.pbproxy:$PATH"
 hash -r
 ```
+
+## Alternatives
+
+If you know of any other tools in this space feel free to open a PR to include them here!
+
+- [marcopaganini/clipsync](https://github.com/marcopaganini/clipsync) - conceptually similar, but runs as a background daemon. Unlike pbproxy, this means it can sync automatically in realtime over the cloud, whereas pbproxy only connects to other clipboards on demand. Linux only for now though.
+
